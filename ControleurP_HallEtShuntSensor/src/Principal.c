@@ -80,7 +80,7 @@ float erreur_act=0;
 float erreur_mem=0;
 float sigma_act=0;
 float sigma_mem=0;
-float alpha=0;
+int alpha=0;
 
 int main(void)
 
@@ -139,12 +139,10 @@ int main(void)
 
 void IT_Principale(void)
 {
-	//ucons= Read_Cons();
-		//ui= Read_I();
-		ui=0;
+		ucons= Read_Cons();
+		ui= Read_I();
 		
-		//cons=(3.3/4096)*ucons;
-		cons=0.1;
+		cons=(3.3/4096)*ucons;
 		i=(3.3/4096)*ui;
 		erreur_mem=erreur_act;
 		erreur_act= cons - i;
@@ -156,6 +154,9 @@ void IT_Principale(void)
 	if (sigma_act<-0.495) {
 		sigma_act=-0.495;
 	}
+	alpha=(int) (1000*(sigma_act)) + 500;
+	R_Cyc_1(alpha);
+	R_Cyc_2(alpha);
 }
 
 
