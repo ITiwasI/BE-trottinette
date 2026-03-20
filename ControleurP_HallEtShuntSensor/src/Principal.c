@@ -72,6 +72,7 @@ void LCD_ClearDownLine(void);
 
 
 char MessageLCD[50];
+int uref=0;
 int ucons=0;
 float cons=0;
 int ui=0;
@@ -81,6 +82,8 @@ float erreur_mem=0;
 float sigma_act=0;
 float sigma_mem=0;
 int alpha=0;
+int compt=0;
+int compt_max=100;
 
 int main(void)
 
@@ -102,8 +105,11 @@ int main(void)
 	lcd_Clear();
 	
 	LCD_ClearTopLine();
-	lcd_Print("Bienvenue ! ");
 	LCD_ClearDownLine();
+	lcd_Set_cursor(0,0);
+	lcd_Print("PS : commande");
+	lcd_Set_cursor(0,1);
+	lcd_Print("par software");
 
 	/*============== Conf PWM  ==================*/
 	Triangle(20.0);   /*  PWM en ref triangulaire 20kHz*/
@@ -139,10 +145,24 @@ int main(void)
 
 void IT_Principale(void)
 {
-		ucons= Read_Cons();
-		ui= Read_I();
+	ucons=Read_Cons();
+	ui= Read_I();
+	uref=Read_Ref();
+	
+	compt=compt+1;
+	if (compt<compt_max){
+		if (compt<compt_max/2){
+		cons= (3.3/4096)*uref+0.05;
+		}
+		else{
+			cons=(3.3/4096)*uref-0.05;
+		}
+	}
+	else{
+		compt=0;
+	}
 		
-		cons=(3.3/4096)*ucons;
+		//cons=(3.3/4096)*ucons;
 		i=(3.3/4096)*ui;
 		erreur_mem=erreur_act;
 		erreur_act= cons - i;
